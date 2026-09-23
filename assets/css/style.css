@@ -251,21 +251,8 @@ h1 .expand { font-size: .52em; }
 
 figure.narrow { max-width: 30rem; margin-left: auto; margin-right: auto; }
 
-/* grouped header in the main results table */
-th.grp {
-  text-align: center; border-bottom: 1px solid var(--grid);
-  font-weight: 600; text-transform: none; letter-spacing: 0;
-  font-size: .8rem; color: var(--ink);
-}
-th.grp i { color: var(--muted); font-weight: 400; }
-thead tr:first-child th.grp + th.grp { border-left: 1px solid var(--grid); }
-
-tbody tr.ref td { color: var(--muted); font-style: italic; }
-tbody tr.ref td.l i { font-style: italic; }
-tbody tr.blockend td { border-bottom: 1px solid var(--grid); }
 tbody tr.shade td { background: var(--band); }
 tbody tr.total td { font-weight: 700; background: var(--band); }
-td .sd { color: var(--muted); font-size: .85em; }
 td.down { color: var(--warn); }
 
 /* two-column key/value tables in the benchmark section have no head */

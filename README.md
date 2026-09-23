@@ -27,8 +27,12 @@ it was transcribed from:
 |---|---|
 | `dataset` | `sections/3_dataset.tex` — `tab:data`, `fig:wer-sim-utmos`, `subsec:dataset_validation` |
 | `diagnostic` | `sections/4_preliminary.tex` — `tab:toolcall_invocation_diagnostic` + prose |
-| `main` | `sections/5_experiments.tex` — `tab:all_audio_results` |
-| `emotion` | `sections/5_experiments.tex` — `sec:input_analysis` |
+
+The main results table (`tab:all_audio_results`) and the emotional-delivery
+analysis (`sec:input_analysis`) are deliberately **not** on the page — the page
+stops at the diagnosis and the method, and sends the reader to the paper for the
+outcome. Re-adding either means restoring its `data.js` block, its `<section>`,
+and the render call in `app.js`.
 
 An earlier version of this page generated the tables from
 `work/results/*.summary.json`. That was wrong for a project page: the paper's
@@ -40,8 +44,9 @@ with the paper is worse than no page. **When the paper changes, edit
 
 ## Figures
 
-`assets/fig/` holds the three figures the paper actually includes, as PNG (for
-the page) and PDF (to download). They are copies, so the repo is
+`assets/fig/` holds the three figures the paper includes, as PNG (for the page)
+and PDF (to download); `emotional_delivery` is kept for the download link and
+for whenever that section comes back. They are copies, so the repo is
 self-contained. After recompiling a figure:
 
 ```bash

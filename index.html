@@ -21,8 +21,6 @@
       <a href="#data">Benchmark</a>
       <a href="#diagnostic">Diagnosis</a>
       <a href="#method">Method</a>
-      <a href="#results">Results</a>
-      <a href="#emotion">Emotion</a>
       <a href="#cite">Cite</a>
       <button id="theme" type="button" aria-label="Toggle colour scheme">◐</button>
     </div>
@@ -286,86 +284,6 @@
           one epoch on 4×H100, lr 5×10⁻⁶.</p>
       </div>
     </div>
-  </div>
-</section>
-
-<section id="results">
-  <div class="wrap">
-    <h2>Results</h2>
-    <p class="lede">Intervention and tool calling with full-dialogue audio input.
-      <b>SFT + RL</b> reports mean ± standard deviation over three random seeds.
-      <i>Always Silent</i> is the majority-class baseline — read Accuracy against
-      it, never alone.</p>
-
-    <div class="tablewrap">
-      <table id="main">
-        <thead>
-          <tr>
-            <th class="l" rowspan="2">Model</th><th class="l" rowspan="2">Checkpoint</th>
-            <th colspan="3" class="grp">Intervention <i>(when to act)</i></th>
-            <th colspan="3" class="grp">Tool calling <i>(what to call)</i></th>
-          </tr>
-          <tr>
-            <th>Acc. ↑</th><th>Macro-F1 ↑</th><th>Speak-F1 ↑</th>
-            <th>Tool Acc. ↑</th><th>JGA ↑</th><th>Slot F1 ↑</th>
-          </tr>
-        </thead>
-        <tbody></tbody>
-      </table>
-    </div>
-    <p class="note">Speak-F1 collapses the three non-silent labels to measure
-      whether the model correctly decides to intervene at all. SFT raises
-      Speak-F1 by up to <b>54.7</b> points over Base and more than doubles the
-      always-silent Macro-F1 reference; RLVR then raises JGA from 57.4–61.5% to
-      <b>66.3–71.1%</b> and Slot F1 to <b>87.0–88.0%</b> while intervention
-      performance is preserved.</p>
-  </div>
-</section>
-
-<section id="emotion">
-  <div class="wrap">
-    <h2>Does vocal delivery matter?</h2>
-    <p class="lede">The original audio is compared with a neutral-delivery
-      resynthesis of the same utterances — lexical content preserved, vocal
-      emotion removed.</p>
-
-    <figure class="narrow">
-      <img src="assets/fig/emotional_delivery.png"
-           alt="Emotion probes before and after neutral resynthesis, beside intervention and URGENT recall under both conditions.">
-      <figcaption><a class="dl" href="assets/fig/emotional_delivery.pdf">PDF</a>
-        <b>Effect of neutralizing emotional delivery.</b> (a) Emotion probes
-        verify that neutral resynthesis reduces vocal-emotion cues while
-        retaining lexical content. (b) Intervention and <code>URGENT</code>
-        recall compare original and neutral delivery to test whether vocal cues
-        affect intervention decisions.</figcaption>
-    </figure>
-
-    <div class="two">
-      <div>
-        <h3>Manipulation check</h3>
-        <div class="tablewrap">
-          <table id="probe">
-            <thead><tr><th class="l">Probe</th><th>Original</th>
-              <th>Neutral</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-      <div>
-        <h3>Behaviour on the same rows</h3>
-        <div class="tablewrap">
-          <table id="behav">
-            <thead><tr><th class="l">Endpoint</th><th>Change</th>
-              <th>Test</th></tr></thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-    <p class="note">Both probes approach chance after resynthesis, so the
-      manipulation worked. The larger change in <code>URGENT</code> recall
-      suggests vocal emotion can provide an additional cue for intervention
-      decisions beyond lexical content.</p>
   </div>
 </section>
 

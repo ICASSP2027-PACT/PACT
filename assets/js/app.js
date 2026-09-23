@@ -78,44 +78,6 @@
     if (r.reasoning) tr.classList.add("shade");   // the paper shades these rows
   });
 
-  /* ---------------------------------------------------------------- main */
-  var COLS = ["acc", "macro", "speak", "tool", "jga", "slot"];
-  var mb = tbody("main");
-
-  function mainRow(r) {
-    var tr = el("tr");
-    if (r.ref) tr.className = "ref";
-    var m = el("td", "l");
-    m.appendChild(el("i", null, r.model));
-    tr.appendChild(m);
-    tr.appendChild(el("td", "l", r.ckpt));
-    COLS.forEach(function (k) {
-      var td = el("td", "num");
-      td.appendChild(document.createTextNode(r[k]));
-      if (r.sd && r.sd[k]) {
-        td.appendChild(el("span", "sd", " ±" + r.sd[k]));
-      }
-      if (r.best && r.best.indexOf(k) > -1) td.classList.add("best");
-      tr.appendChild(td);
-    });
-    mb.appendChild(tr);
-  }
-
-  mainRow(D.main.baseline);
-  D.main.rows.forEach(function (r, i) {
-    // a rule before each new model block, as in the paper
-    if (i > 0 && r.model !== D.main.rows[i - 1].model) {
-      mb.lastChild.classList.add("blockend");
-    }
-    mainRow(r);
-  });
-
-  /* ------------------------------------------------------------- emotion */
-  D.emotion.probe.forEach(function (r) { row(tbody("probe"), r); });
-  D.emotion.behaviour.forEach(function (r) {
-    row(tbody("behav"), r).children[1].classList.add("down");
-  });
-
   /* --------------------------------------------------------------- theme */
   var root = document.documentElement, KEY = "pact-theme";
   try {
