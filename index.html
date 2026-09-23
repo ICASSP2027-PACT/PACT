@@ -1,0 +1,332 @@
+<!doctype html>
+<html lang="en" data-theme="">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PACT</title>
+<meta name="description" content="A benchmark and study of proactive agent intervention and tool calling from overheard conversational speech.">
+<meta property="og:title" content="PACT">
+<meta property="og:description" content="When should a background assistant speak, and what should it call? A benchmark over 3,007 spoken dialogues.">
+<meta property="og:type" content="website">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#top">PACT</a>
+    <div class="links">
+      <a href="#task">Task</a>
+      <a href="#benchmark">Benchmark</a>
+      <a href="#results">Results</a>
+      <a href="#findings">Findings</a>
+      <a href="#resources">Resources</a>
+      <a href="#cite">Cite</a>
+      <button id="theme" type="button" aria-label="Toggle colour scheme">◐</button>
+    </div>
+  </div>
+</nav>
+
+<header id="top">
+  <div class="wrap">
+    <span class="badge">Under review · ICASSP 2027</span>
+
+    <!-- ===================================================== EDIT ME (1/4)
+         Title and acronym expansion. Everything else on this page is either
+         generated from the runs or written against the results; these four
+         blocks are the only prose that has to match the submitted paper. -->
+    <h1>PACT
+      <span class="expand">Proactive Agent Conversational Tool-calling
+        <span class="todo">confirm expansion</span></span>
+    </h1>
+    <p class="authors">Anonymous authors · Paper under double-blind review</p>
+    <!-- =================================================== /EDIT ME (1/4) -->
+
+    <div class="buttons">
+      <!-- ================================================== EDIT ME (2/4)
+           Drop the real URLs in and remove aria-disabled from each link that
+           has one. A button that goes nowhere is worse than no button. -->
+      <a class="btn" href="#" aria-disabled="true">📄 Paper (PDF)</a>
+      <a class="btn" href="#" aria-disabled="true">📝 arXiv</a>
+      <a class="btn" href="https://github.com/ICASSP2027-PACT/PACT">💻 Code</a>
+      <a class="btn" href="#" aria-disabled="true">🗂️ Dataset</a>
+      <a class="btn" href="#resources">🎧 Audio samples</a>
+      <!-- ================================================ /EDIT ME (2/4) -->
+    </div>
+
+    <!-- ===================================================== EDIT ME (3/4)
+         Abstract, verbatim from the submission. -->
+    <p class="notice"><b>Abstract.</b> <span class="todo">paste the submitted
+      abstract here</span> — a background voice assistant that overhears a
+      two-person conversation must decide, at every turn, whether to speak at
+      all, and if so what tool call to issue. Neither decision is ever spoken
+      aloud. We formalise this as a two-stage task over conversational speech,
+      release a benchmark of 3,007 emotionally-acted spoken dialogues, and show
+      that off-the-shelf audio language models fail at it in a specific and
+      measurable way.</p>
+    <!-- =================================================== /EDIT ME (3/4) -->
+  </div>
+</header>
+
+<section id="tldr">
+  <div class="wrap">
+    <div class="cards">
+      <div class="card">
+        <h3>A decision at every turn</h3>
+        <p>Not “answer the question”. At each human turn the agent chooses
+          <em>silence</em> or one of three ways to intervene — and 84.5% of the
+          20,422 test decision points are silence.</p>
+      </div>
+      <div class="card">
+        <h3>The call is never requested</h3>
+        <p>Arguments arrive scattered across the dialogue, a median of three
+          turns before the trigger. No user ever says “call the API”, so the
+          model has to notice that it now can.</p>
+      </div>
+      <div class="card">
+        <h3>Selection survives, grounding does not</h3>
+        <p>Adapted models name the right tool on at least 98.9% of calls, yet
+          the best joint-argument accuracy on the same calls is 69.8%.
+          Grounding, not selection, is what the benchmark measures.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="task">
+  <div class="wrap">
+    <h2>The task</h2>
+    <p class="lede">Two people talk. An assistant listens without being
+      addressed. At every human turn it makes a Stage&nbsp;1 decision, and when
+      it acts it must also produce a Stage&nbsp;2 tool call. The two stages are
+      scored independently at gold anchors, so no number on this page is an
+      end-to-end cascade.</p>
+
+    <figure>
+      <img src="assets/fig/fig1_overview.png"
+           alt="One test dialogue running left to right, with a decision marker at every human turn and the tool call arriving after the arguments have been spoken.">
+      <figcaption><a class="dl" href="assets/fig/fig1_overview.pdf">PDF</a>
+        <b>The problem, carried by one real test dialogue.</b> A decision is
+        taken at every human turn — eleven markers here, nine of them silence.
+        The arguments of the tool call arrive at turns scattered through the
+        history, which is what puts <i>t</i><sub>ready</sub> earlier than
+        <i>t</i><sub>act</sub>.</figcaption>
+    </figure>
+
+    <h3>Stage 1 — when to speak</h3>
+    <dl class="labels">
+      <dt>SILENT</dt><dd>say nothing at this turn</dd>
+      <dt>SPEAK_NOW</dt><dd>intervene at this turn boundary</dd>
+      <dt>SPEAK_BRIEF_AT_END</dt><dd>wait for the dialogue to close, then speak briefly</dd>
+      <dt>URGENT</dt><dd>interrupt — the conversation should not continue first</dd>
+    </dl>
+
+    <h3>Stage 2 — what to call</h3>
+    <p class="lede" style="margin-top:.5rem">A single JSON object,
+      <code>{tool_name, call_parameters}</code>, grounded in what was said.
+      Scored as tool accuracy, slot/key/value P–R–F1, and
+      <code>params_exact</code> — every argument right, the joint goal accuracy
+      of this task.</p>
+  </div>
+</section>
+
+<section id="benchmark">
+  <div class="wrap">
+    <h2>The benchmark</h2>
+    <p class="lede">Spoken two-party dialogues with emotionally acted delivery,
+      each ending in a tool call that nobody asks for. Numbers below are read
+      straight out of the released splits by
+      <code>tools/build_data.py</code>.</p>
+
+    <div class="stats" id="stats"></div>
+
+    <h3>Composition</h3>
+    <div class="tablewrap">
+      <table id="dstable">
+        <thead><tr><th class="l">Split</th><th>Dialogues</th><th>Turns</th>
+          <th>Turns / dialogue</th><th>Tools</th><th>Categories</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note">Every dialogue is <code>tool_call</code> type. Each carries
+      a category, a candidate-tool set with distractors, an
+      <code>act_timing</code> (post-turn / end-of-dialogue / interrupt), an
+      agent behaviour pattern, per-turn emotion and intensity labels, and the
+      reference call with its simulated response.</p>
+
+    <h3>Emotion on the turns</h3>
+    <div class="tablewrap">
+      <table id="emtable">
+        <thead><tr><th class="l">Emotion</th><th>Train turns</th>
+          <th>Test turns</th><th>Share (test)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note">Delivery is acted, not annotated after the fact: the text is
+      synthesised with the labelled emotion. A fully neutral resynthesis of the
+      test split — same words, same speaker, same turn order, delivery removed —
+      ships alongside it as a control.</p>
+  </div>
+</section>
+
+<section id="results">
+  <div class="wrap">
+    <h2>Results</h2>
+    <p class="lede">All arms on the same 20,422 Stage&nbsp;1 decision rows and
+      1,581 Stage&nbsp;2 calls of the test split. <b>Audio</b> is how much of
+      the conversation the model hears as speech rather than as transcript;
+      <b>context</b> is how far back the prompt reaches.</p>
+
+    <div class="filters" id="filters">
+      <button type="button" data-f="all" aria-pressed="true">All</button>
+      <button type="button" data-f="base" aria-pressed="false">Off-the-shelf</button>
+      <button type="button" data-f="sft" aria-pressed="false">Adapted</button>
+    </div>
+
+    <div class="tablewrap">
+      <table id="restable">
+        <thead><tr>
+          <th class="l">Model</th><th class="l">Audio</th><th class="l">Context</th>
+          <th>Acc</th><th>Speak P</th><th>Speak R</th><th>Speak F1</th>
+          <th>URGENT F1</th><th>Tool acc</th><th>Params exact</th>
+        </tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note"><b>Acc</b> is 4-way decision accuracy, which an always-silent
+      policy already scores 0.845 on — read it next to Speak F1, never alone.
+      <b>Params exact</b> is joint goal accuracy on Stage&nbsp;2. Best value in
+      each column is highlighted. Generated from
+      <code>work/results/exp4_v5t2/*.summary.json</code>; nothing is transcribed
+      by hand.</p>
+  </div>
+</section>
+
+<section id="findings">
+  <div class="wrap">
+    <h2>What we found</h2>
+    <p class="lede">Four figures, in the order the paper reads them.</p>
+
+    <figure>
+      <img src="assets/fig/rq1_calibration.png"
+           alt="Three panels: predicted label distributions against the gold prior, per-class F1 against an all-silent baseline, and missed intervention against false interruption.">
+      <figcaption><a class="dl" href="assets/fig/rq1_calibration.pdf">PDF</a>
+        <b>Off-the-shelf audio LMs do not fail randomly.</b> One model
+        reproduces the gold label prior almost exactly while the other inverts
+        it; neither separates the three intervention classes, and the two land
+        at opposite corners of the missed-intervention / false-interruption
+        trade-off.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/fig/invocation_roc_v4.png"
+           alt="Intervention decisions in ROC space, with and without an explicit spoken invocation.">
+      <figcaption><a class="dl" href="assets/fig/invocation_roc_v4.pdf">PDF</a>
+        <b>Removing the spoken invocation moves the operating point, not the
+        ranking.</b> The same models in ROC space with and without an explicit
+        request, including Audio Flamingo 3.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/fig/intervention_errors.png"
+           alt="Distribution of the gap between readiness and trigger, false-positive rates on ready contexts, and the same split inside fixed turn-index bands.">
+      <figcaption><a class="dl" href="assets/fig/intervention_errors.pdf">PDF</a>
+        <b>Being able to act is not a corner case.</b> Every argument the
+        reference call needs has been spoken a median of three turns before the
+        dialogue's own trigger fires — 6,722 of the 17,260 non-intervention
+        decision points. Panel (c) is the caveat, measured: absolute turn
+        position is the dominant driver on its own.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/fig/implicit_toolcall.png"
+           alt="Tool selection against argument grounding, the slot score split into naming and filling, and accuracy against the number of arguments required.">
+      <figcaption><a class="dl" href="assets/fig/implicit_toolcall.pdf">PDF</a>
+        <b>Selection survives, grounding does not.</b> An untuned model picks
+        the right tool almost every time and fills its arguments almost never,
+        from the same generations. Adaptation fixes argument <i>naming</i>
+        almost completely and leaves value extraction as the residual
+        error.</figcaption>
+    </figure>
+
+    <figure>
+      <img src="assets/fig/emotional_delivery.png"
+           alt="An acoustic emotion probe before and after neutral resynthesis, beside the model's decision scores on the same rows.">
+      <figcaption><a class="dl" href="assets/fig/emotional_delivery.pdf">PDF</a>
+        <b>Emotional delivery, tested by removing it.</b> Panel (a) is the
+        manipulation check — an acoustic probe can no longer hear the emotion
+        after resynthesis. Panel (b) is the behaviour on the same rows, drawn
+        the same way, so the two panels can be read against each
+        other.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="resources">
+  <div class="wrap">
+    <h2>Resources</h2>
+    <!-- ======================================================= EDIT ME (4/4)
+         Replace the placeholders once the release targets exist. Keep the
+         anonymity constraint in mind: a personal Drive link or a named HF
+         account de-anonymises the submission. -->
+    <div class="cards">
+      <div class="card">
+        <h3>Benchmark data</h3>
+        <p>3,007 dialogues with audio, per-turn emotion labels and reference
+          calls, plus the neutral-resynthesis control split.
+          <span class="todo">release link</span></p>
+      </div>
+      <div class="card">
+        <h3>Code</h3>
+        <p>Dataset construction, the two-stage evaluators, and every figure on
+          this page.
+          <a href="https://github.com/ICASSP2027-PACT/PACT">github.com/ICASSP2027-PACT</a></p>
+      </div>
+      <div class="card">
+        <h3>Audio samples</h3>
+        <p>Original and neutral-resynthesis pairs for the same turns, so the
+          manipulation can be heard rather than taken on trust.
+          <span class="todo">add samples</span></p>
+      </div>
+    </div>
+    <!-- ===================================================== /EDIT ME (4/4) -->
+
+    <h3>Rebuilding this page</h3>
+    <p class="lede" style="margin-bottom:.75rem">Every number comes from the run
+      summaries. After a new arm lands, add one line to <code>ARMS</code> and
+      re-run:</p>
+<pre><code>python tools/build_data.py     # -&gt; data/*.json and assets/js/data.js
+python -m http.server 8000     # open http://localhost:8000</code></pre>
+  </div>
+</section>
+
+<section id="cite">
+  <div class="wrap">
+    <h2>Citation</h2>
+    <p class="lede">Anonymous while the paper is under review.</p>
+<pre><code>@inproceedings{anonymous2027pact,
+  title     = {PACT: {TODO} full title},
+  author    = {Anonymous},
+  booktitle = {Submitted to IEEE International Conference on Acoustics,
+               Speech and Signal Processing (ICASSP)},
+  year      = {2027},
+  note      = {Under review}
+}</code></pre>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p><b>Anonymity.</b> This page accompanies a double-blind submission. It
+      carries no author names, affiliations, contact addresses or links to
+      personal accounts, and it should not until the review period ends.</p>
+    <p>Figures and tables are regenerated from the evaluation logs by
+      <code>tools/build_data.py</code>.</p>
+  </div>
+</footer>
+
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
