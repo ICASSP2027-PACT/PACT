@@ -1,20 +1,11 @@
-/* PACT project page - renders the generated tables and remembers the theme.
-   All data comes from assets/js/data.js (window.PACT_DATA), which
-   tools/build_data.py writes from the evaluation summaries. Nothing here
-   computes a metric; if a number is wrong, the run or the builder is wrong. */
+/* Renders the tables in index.html from assets/js/data.js.
+   Nothing here computes a metric - every value is transcribed from the paper
+   in data.js. This file only decides how it is laid out. */
 (function () {
   "use strict";
 
   var D = window.PACT_DATA;
-  if (!D) {
-    console.error("PACT: assets/js/data.js missing - run tools/build_data.py");
-    return;
-  }
-
-  var fmt3 = function (v) {
-    return (v === null || v === undefined) ? "–" : v.toFixed(3);
-  };
-  var int = function (v) { return v.toLocaleString("en-US"); };
+  if (!D) { console.error("PACT: assets/js/data.js is missing"); return; }
 
   function el(tag, cls, text) {
     var n = document.createElement(tag);
@@ -22,116 +13,121 @@
     if (text !== undefined) n.textContent = text;
     return n;
   }
+  function row(tbody, cells, opts) {
+    var tr = el("tr");
+    cells.forEach(function (c, i) {
+      var td = el("td", i === 0 ? "l" : "num", c);
+      if (opts && opts.best && opts.best.indexOf(i) > -1) td.classList.add("best");
+      tr.appendChild(td);
+    });
+    if (opts && opts.cls) tr.className = opts.cls;
+    tbody.appendChild(tr);
+    return tr;
+  }
+  function tbody(id) { return document.querySelector("#" + id + " tbody"); }
 
-  /* ------------------------------------------------------------- stats */
-  var t = D.dataset.total;
-  var stats = [
-    [int(t.dialogues), "spoken dialogues"],
-    [int(t.turns), "annotated turns"],
-    [int(t.tools), "distinct tools"],
-    [int(t.categories), "domains"]
-  ];
+  /* ------------------------------------------------------------- dataset */
   var sw = document.getElementById("stats");
-  stats.forEach(function (s) {
+  D.dataset.headline.forEach(function (s) {
     var d = el("div", "stat");
     d.appendChild(el("b", null, s[0]));
     d.appendChild(el("span", null, s[1]));
     sw.appendChild(d);
   });
 
-  /* --------------------------------------------------------- composition */
-  var body = document.querySelector("#dstable tbody");
-  ["train", "test"].forEach(function (k) {
-    var s = D.dataset[k], tr = el("tr");
-    tr.appendChild(el("td", "l", k));
-    [s.dialogues, s.turns].forEach(function (v) {
-      tr.appendChild(el("td", "num", int(v)));
+  D.dataset.corpus.forEach(function (r, i) {
+    // the last line is the corpus total, which the paper shades
+    row(tbody("corpus"), r, { cls: i === D.dataset.corpus.length - 1 ? "total" : "" });
+  });
+  D.dataset.behavior.forEach(function (r) { row(tbody("behavior"), r); });
+  D.dataset.timing.forEach(function (r) { row(tbody("timing"), r); });
+
+  /* A bar per measure rather than a number: the paper draws these as bars
+     because the scales differ (UTMOS out of 5, WER out of 20%, similarity out
+     of 100%) and a bare triple of numbers invites reading them as comparable. */
+  var q = document.getElementById("quality");
+  D.dataset.quality.forEach(function (m) {
+    var wrap = el("div", "meter");
+    var head = el("div", "meter-head");
+    head.appendChild(el("span", "meter-name", m[0]));
+    head.appendChild(el("b", "meter-val", m[3]));
+    var bar = el("div", "meter-bar");
+    var fill = el("i");
+    fill.style.width = (m[1] / m[2] * 100).toFixed(1) + "%";
+    bar.appendChild(fill);
+    var scale = el("span", "meter-scale", "0 – " + m[2] + (m[0] === "UTMOS" ? "" : "%"));
+    wrap.appendChild(head); wrap.appendChild(bar); wrap.appendChild(scale);
+    q.appendChild(wrap);
+  });
+
+  D.dataset.judge.forEach(function (r) { row(tbody("judge"), r); });
+  document.getElementById("judgeall").textContent = D.dataset.judge_all;
+
+  /* ---------------------------------------------------------- diagnostic */
+  D.diagnostic.macro_f1.forEach(function (m) {
+    var d = m[2] - m[1];
+    row(tbody("macro"), [m[0], m[1].toFixed(3), m[2].toFixed(3),
+                         (d > 0 ? "+" : "−") + Math.abs(d).toFixed(3)])
+      .lastChild.classList.add("down");
+  });
+
+  D.diagnostic.rows.forEach(function (r) {
+    var tr = row(tbody("diag"),
+      [r.model, r.cond, r.tool.toFixed(1), r.jga.toFixed(1), r.slot.toFixed(1)]);
+    tr.children[1].className = "l";
+    if (r.reasoning) tr.classList.add("shade");   // the paper shades these rows
+  });
+
+  /* ---------------------------------------------------------------- main */
+  var COLS = ["acc", "macro", "speak", "tool", "jga", "slot"];
+  var mb = tbody("main");
+
+  function mainRow(r) {
+    var tr = el("tr");
+    if (r.ref) tr.className = "ref";
+    var m = el("td", "l");
+    m.appendChild(el("i", null, r.model));
+    tr.appendChild(m);
+    tr.appendChild(el("td", "l", r.ckpt));
+    COLS.forEach(function (k) {
+      var td = el("td", "num");
+      td.appendChild(document.createTextNode(r[k]));
+      if (r.sd && r.sd[k]) {
+        td.appendChild(el("span", "sd", " ±" + r.sd[k]));
+      }
+      if (r.best && r.best.indexOf(k) > -1) td.classList.add("best");
+      tr.appendChild(td);
     });
-    tr.appendChild(el("td", "num", s.turns_per_dialogue.toFixed(1)));
-    tr.appendChild(el("td", "num", int(s.tools)));
-    tr.appendChild(el("td", "num", int(s.categories)));
-    body.appendChild(tr);
-  });
-
-  /* -------------------------------------------------------------- emotion */
-  var em = document.querySelector("#emtable tbody");
-  var te = D.dataset.test.emotions, tr_ = D.dataset.train.emotions;
-  var total = Object.keys(te).reduce(function (a, k) { return a + te[k]; }, 0);
-  Object.keys(te).forEach(function (k) {
-    var row = el("tr");
-    row.appendChild(el("td", "l", k));
-    row.appendChild(el("td", "num", int(tr_[k] || 0)));
-    row.appendChild(el("td", "num", int(te[k])));
-    row.appendChild(el("td", "num", (te[k] / total * 100).toFixed(1) + "%"));
-    em.appendChild(row);
-  });
-
-  /* -------------------------------------------------------------- results */
-  var METRICS = ["accuracy", "speak_p", "speak_r", "speak_f1",
-                 "urgent_f1", "tool_accuracy", "params_exact"];
-  // Best-in-column is computed over the ADAPTED arms only. An off-the-shelf
-  // model that answers "silent" to everything can top a column without doing
-  // the task, and bolding that would be the figure lying on the table's behalf.
-  var best = {};
-  METRICS.forEach(function (m) {
-    best[m] = D.results.reduce(function (acc, r) {
-      return (r.family === "sft" && typeof r[m] === "number" && r[m] > acc)
-        ? r[m] : acc;
-    }, -Infinity);
-  });
-
-  var rbody = document.querySelector("#restable tbody");
-
-  function render(filter) {
-    rbody.textContent = "";
-    D.results.forEach(function (r) {
-      if (filter !== "all" && r.family !== filter) return;
-      var tr = el("tr");
-      tr.dataset.family = r.family;
-
-      var name = el("td", "l");
-      name.appendChild(document.createTextNode(r.label));
-      var tag = el("span", "rowtag " + r.family,
-                   r.family === "base" ? "off-the-shelf" : "adapted");
-      name.appendChild(tag);
-      tr.appendChild(name);
-
-      tr.appendChild(el("td", "l", r.mode_text));
-      tr.appendChild(el("td", "l", r.span_text));
-      METRICS.forEach(function (m) {
-        var td = el("td", "num", fmt3(r[m]));
-        if (r.family === "sft" && r[m] === best[m]) td.classList.add("best");
-        tr.appendChild(td);
-      });
-      rbody.appendChild(tr);
-    });
+    mb.appendChild(tr);
   }
 
-  render("all");
-
-  var filters = document.getElementById("filters");
-  filters.addEventListener("click", function (e) {
-    var b = e.target.closest("button[data-f]");
-    if (!b) return;
-    Array.prototype.forEach.call(filters.querySelectorAll("button"), function (x) {
-      x.setAttribute("aria-pressed", String(x === b));
-    });
-    render(b.dataset.f);
+  mainRow(D.main.baseline);
+  D.main.rows.forEach(function (r, i) {
+    // a rule before each new model block, as in the paper
+    if (i > 0 && r.model !== D.main.rows[i - 1].model) {
+      mb.lastChild.classList.add("blockend");
+    }
+    mainRow(r);
   });
 
-  /* ---------------------------------------------------------------- theme */
-  var root = document.documentElement;
-  var KEY = "pact-theme";
+  /* ------------------------------------------------------------- emotion */
+  D.emotion.probe.forEach(function (r) { row(tbody("probe"), r); });
+  D.emotion.behaviour.forEach(function (r) {
+    row(tbody("behav"), r).children[1].classList.add("down");
+  });
+
+  /* --------------------------------------------------------------- theme */
+  var root = document.documentElement, KEY = "pact-theme";
   try {
     var saved = localStorage.getItem(KEY);
     if (saved) root.setAttribute("data-theme", saved);
-  } catch (err) { /* private mode, blocked storage: the OS default is fine */ }
+  } catch (err) { /* blocked storage: the OS preference is a fine default */ }
 
   document.getElementById("theme").addEventListener("click", function () {
     var now = root.getAttribute("data-theme");
-    var isDark = now === "dark" || (!now &&
+    var dark = now === "dark" || (!now &&
       window.matchMedia("(prefers-color-scheme: dark)").matches);
-    var next = isDark ? "light" : "dark";
+    var next = dark ? "light" : "dark";
     root.setAttribute("data-theme", next);
     try { localStorage.setItem(KEY, next); } catch (err) { /* see above */ }
   });

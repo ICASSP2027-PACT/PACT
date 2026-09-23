@@ -3,10 +3,10 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>PACT</title>
-<meta name="description" content="A benchmark and study of proactive agent intervention and tool calling from overheard conversational speech.">
-<meta property="og:title" content="PACT">
-<meta property="og:description" content="When should a background assistant speak, and what should it call? A benchmark over 3,007 spoken dialogues.">
+<title>When to Act, What to Call: Toward Proactive Voice Agents</title>
+<meta name="description" content="Proactive spoken tool use: a voice agent infers latent actionable intent in a human-human conversation and decides when to intervene and what tool to call. ICASSP 2027 submission.">
+<meta property="og:title" content="When to Act, What to Call: Toward Proactive Voice Agents">
+<meta property="og:description" content="A benchmark of 3K spoken dialogues with turn-level intervention labels and reference tool calls, plus SFT and grounding-focused RLVR.">
 <meta property="og:type" content="website">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎙️</text></svg>">
@@ -18,10 +18,11 @@
     <a class="brand" href="#top">PACT</a>
     <div class="links">
       <a href="#task">Task</a>
-      <a href="#benchmark">Benchmark</a>
+      <a href="#data">Benchmark</a>
+      <a href="#diagnostic">Diagnosis</a>
+      <a href="#method">Method</a>
       <a href="#results">Results</a>
-      <a href="#findings">Findings</a>
-      <a href="#resources">Resources</a>
+      <a href="#emotion">Emotion</a>
       <a href="#cite">Cite</a>
       <button id="theme" type="button" aria-label="Toggle colour scheme">◐</button>
     </div>
@@ -30,42 +31,59 @@
 
 <header id="top">
   <div class="wrap">
-    <span class="badge">Under review · ICASSP 2027</span>
+    <span class="badge">Submitted to ICASSP 2027</span>
+    <h1>When to Act, What to Call<span class="expand">Toward Proactive Voice Agents</span></h1>
 
-    <!-- ===================================================== EDIT ME (1/4)
-         Title and acronym expansion. Everything else on this page is either
-         generated from the runs or written against the results; these four
-         blocks are the only prose that has to match the submitted paper. -->
-    <h1>PACT
-      <span class="expand">Proactive Agent Conversational Tool-calling
-        <span class="todo">confirm expansion</span></span>
-    </h1>
-    <p class="authors">Anonymous authors · Paper under double-blind review</p>
-    <!-- =================================================== /EDIT ME (1/4) -->
+    <p class="authors">
+      Jihoon Jeong<sup>1,2,*</sup>,
+      Yejin Jeon<sup>1,3,*</sup>,
+      Jihyoung Jang<sup>4</sup>,
+      Hyounghun Kim<sup>4</sup>,
+      David Ifeoluwa Adelani<sup>1,3,5</sup>,
+      Cem Subakan<sup>1,2</sup>
+      <span class="affil">
+        <sup>1</sup>Mila–Québec AI Institute ·
+        <sup>2</sup>Université Laval ·
+        <sup>3</sup>McGill University ·
+        <sup>4</sup>POSTECH ·
+        <sup>5</sup>Canada CIFAR AI Chair
+        <br><sup>*</sup>Equal contribution.
+      </span>
+    </p>
 
     <div class="buttons">
-      <!-- ================================================== EDIT ME (2/4)
-           Drop the real URLs in and remove aria-disabled from each link that
-           has one. A button that goes nowhere is worse than no button. -->
+      <!-- ======================================================= EDIT ME (1/2)
+           Fill these in and delete aria-disabled from each link that works.
+           The abstract of the current draft points readers at
+           tgsr-icassp2027.github.io/Timestamp-Grounded-Speech-Reasoning/,
+           which is a different project - point it here instead. -->
       <a class="btn" href="#" aria-disabled="true">📄 Paper (PDF)</a>
       <a class="btn" href="#" aria-disabled="true">📝 arXiv</a>
       <a class="btn" href="https://github.com/ICASSP2027-PACT/PACT">💻 Code</a>
       <a class="btn" href="#" aria-disabled="true">🗂️ Dataset</a>
-      <a class="btn" href="#resources">🎧 Audio samples</a>
-      <!-- ================================================ /EDIT ME (2/4) -->
+      <!-- ===================================================== /EDIT ME (1/2) -->
     </div>
 
-    <!-- ===================================================== EDIT ME (3/4)
-         Abstract, verbatim from the submission. -->
-    <p class="notice"><b>Abstract.</b> <span class="todo">paste the submitted
-      abstract here</span> — a background voice assistant that overhears a
-      two-person conversation must decide, at every turn, whether to speak at
-      all, and if so what tool call to issue. Neither decision is ever spoken
-      aloud. We formalise this as a two-stage task over conversational speech,
-      release a benchmark of 3,007 emotionally-acted spoken dialogues, and show
-      that off-the-shelf audio language models fail at it in a specific and
-      measurable way.</p>
-    <!-- =================================================== /EDIT ME (3/4) -->
+    <p class="notice"><b>Abstract.</b> Voice agents typically rely on explicit
+      user requests, leaving open how they should assist in ongoing human-to-human
+      conversations. Toward proactive voice agents, we study <b>proactive spoken
+      tool use</b>, where an agent infers latent actionable intent and decides
+      <i>when to intervene</i> and <i>what tool to call</i>. A benchmark of 3K
+      synthetic spoken dialogues with turn-level intervention labels and reference
+      tool calls is also constructed, separating intervention decisions from tool
+      selection and argument grounding. Experiments with baseline models show that
+      removing explicit invocation worsens intervention decisions, while high
+      tool-selection accuracy coexists with poor argument grounding that reasoning
+      prompting does not consistently improve. We adapt a single large
+      audio-language model for both tasks through supervised fine-tuning (SFT),
+      followed by reinforcement learning with verifiable rewards for tool-call
+      correctness. SFT improves context-sensitive intervention and tool-call
+      prediction, while grounding-focused reinforcement learning further improves
+      the completeness and correctness of arguments recovered from
+      conversation.</p>
+
+    <p class="keywords"><b>Keywords</b> · LALM · proactive spoken tool use ·
+      intervention prediction · argument grounding · reinforcement learning</p>
   </div>
 </header>
 
@@ -73,22 +91,22 @@
   <div class="wrap">
     <div class="cards">
       <div class="card">
-        <h3>A decision at every turn</h3>
-        <p>Not “answer the question”. At each human turn the agent chooses
-          <em>silence</em> or one of three ways to intervene — and 84.5% of the
-          20,422 test decision points are silence.</p>
+        <h3>No one asks the agent</h3>
+        <p>Two people talk; the agent is never addressed. It must recognise
+          <em>latent actionable intent</em> from the conversation itself and
+          decide, at every human turn, whether to help at all.</p>
       </div>
       <div class="card">
-        <h3>The call is never requested</h3>
-        <p>Arguments arrive scattered across the dialogue, a median of three
-          turns before the trigger. No user ever says “call the API”, so the
-          model has to notice that it now can.</p>
+        <h3>Selection is easy, grounding is not</h3>
+        <p>Base models name the right tool 88.8–95.4% of the time but complete
+          the call correctly only 5.0–6.2% of the time. Prompting for explicit
+          reasoning moves JGA by ±0.2 points and <em>lowers</em> Slot F1.</p>
       </div>
       <div class="card">
-        <h3>Selection survives, grounding does not</h3>
-        <p>Adapted models name the right tool on at least 98.9% of calls, yet
-          the best joint-argument accuracy on the same calls is 69.8%.
-          Grounding, not selection, is what the benchmark measures.</p>
+        <h3>SFT, then reward the grounding</h3>
+        <p>SFT lifts JGA from 5.0% to 61.5%. Grounding-focused RLVR takes it to
+          <b>71.1%</b> and Slot F1 to <b>88.0%</b> — without degrading the
+          intervention decisions.</p>
       </div>
     </div>
   </div>
@@ -96,233 +114,281 @@
 
 <section id="task">
   <div class="wrap">
-    <h2>The task</h2>
-    <p class="lede">Two people talk. An assistant listens without being
-      addressed. At every human turn it makes a Stage&nbsp;1 decision, and when
-      it acts it must also produce a Stage&nbsp;2 tool call. The two stages are
-      scored independently at gold anchors, so no number on this page is an
-      end-to-end cascade.</p>
+    <h2>Proactive spoken tool use</h2>
+    <p class="lede">A dialogue is a sequence of turns
+      <code>u<sub>t</sub> = (s<sub>t</sub>, x<sub>t</sub>, a<sub>t</sub>)</code>
+      — speaker, transcription, waveform. Every human turn is a decision point,
+      and both policies see only the observed speech prefix
+      <code>W<sub>1:t</sub> = (a<sub>1</sub>, …, a<sub>t</sub>)</code>.</p>
 
     <figure>
-      <img src="assets/fig/fig1_overview.png"
-           alt="One test dialogue running left to right, with a decision marker at every human turn and the tool call arriving after the arguments have been spoken.">
-      <figcaption><a class="dl" href="assets/fig/fig1_overview.pdf">PDF</a>
-        <b>The problem, carried by one real test dialogue.</b> A decision is
-        taken at every human turn — eleven markers here, nine of them silence.
-        The arguments of the tool call arrive at turns scattered through the
-        history, which is what puts <i>t</i><sub>ready</sub> earlier than
-        <i>t</i><sub>act</sub>.</figcaption>
+      <img src="assets/fig/overview_audioCA.png"
+           alt="Stage 1 decides whether and how to intervene as the dialogue progresses; Stage 2 selects a tool and grounds its arguments.">
+      <figcaption><a class="dl" href="assets/fig/overview_audioCA.pdf">PDF</a>
+        <b>Overview of proactive spoken tool use.</b> In Stage 1 the agent
+        determines whether and how to intervene as the dialogue progresses. Tool
+        selection and argument grounding are conducted in Stage 2. A proactive
+        intervention is shown as an example.</figcaption>
     </figure>
 
-    <h3>Stage 1 — when to speak</h3>
-    <dl class="labels">
-      <dt>SILENT</dt><dd>say nothing at this turn</dd>
-      <dt>SPEAK_NOW</dt><dd>intervene at this turn boundary</dd>
-      <dt>SPEAK_BRIEF_AT_END</dt><dd>wait for the dialogue to close, then speak briefly</dd>
-      <dt>URGENT</dt><dd>interrupt — the conversation should not continue first</dd>
-    </dl>
-
-    <h3>Stage 2 — what to call</h3>
-    <p class="lede" style="margin-top:.5rem">A single JSON object,
-      <code>{tool_name, call_parameters}</code>, grounded in what was said.
-      Scored as tool accuracy, slot/key/value P–R–F1, and
-      <code>params_exact</code> — every argument right, the joint goal accuracy
-      of this task.</p>
+    <div class="two">
+      <div>
+        <h3>Stage 1 — when to act</h3>
+        <p class="small">The intervention policy maps the speech context to
+          <code>ŷ<sub>t</sub> = (b̂<sub>t</sub>, r̂<sub>t</sub>)</code>: whether
+          to intervene, and the timing type if so.</p>
+        <dl class="labels">
+          <dt>(0, ⊥)</dt><dd>do not intervene — keep listening</dd>
+          <dt>NOW</dt><dd>immediate post-turn response</dd>
+          <dt>INTERRUPT</dt><dd>interrupt the ongoing conversation</dd>
+          <dt>AT_CLOSING</dt><dd>brief response at dialogue closure</dd>
+        </dl>
+      </div>
+      <div>
+        <h3>Stage 2 — what to call</h3>
+        <p class="small">Given the same context and a candidate tool set
+          <code>𝒞</code>, the model predicts a tool and its argument dictionary
+          <code>(τ, <b>p</b>)</code>. Prompts include candidate tool names but
+          <b>no parameter schemas</b>, so every value has to be recovered from
+          what was said.</p>
+        <dl class="labels">
+          <dt>Tool Acc.</dt><dd>exact tool-name prediction</dd>
+          <dt>JGA</dt><dd>exact match of the complete call</dd>
+          <dt>Slot F1</dt><dd>partial credit over key–value pairs</dd>
+        </dl>
+      </div>
+    </div>
+    <p class="note">Separating intervention detection from timing classification
+      distinguishes a missed intervention from an error in intervention type.
+      Evaluation covers <b>20,422</b> human-turn contexts for Stage 1 and
+      <b>1,581</b> examples for Stage 2.</p>
   </div>
 </section>
 
-<section id="benchmark">
+<section id="data">
   <div class="wrap">
     <h2>The benchmark</h2>
-    <p class="lede">Spoken two-party dialogues with emotionally acted delivery,
-      each ending in a tool call that nobody asks for. Numbers below are read
-      straight out of the released splits by
-      <code>tools/build_data.py</code>.</p>
+    <p class="lede">Dialogues are generated by multi-stage prompting with
+      Gemini-3.7-flash from Conversation Chronicles seeds, using tool-use
+      scenarios and function schemas from ToolAlpaca, then synthesised with
+      IndexTTS2.</p>
 
     <div class="stats" id="stats"></div>
 
-    <h3>Composition</h3>
-    <div class="tablewrap">
-      <table id="dstable">
-        <thead><tr><th class="l">Split</th><th>Dialogues</th><th>Turns</th>
-          <th>Turns / dialogue</th><th>Tools</th><th>Categories</th></tr></thead>
-        <tbody></tbody>
-      </table>
+    <div class="two">
+      <div>
+        <h3>Corpus</h3>
+        <div class="tablewrap"><table id="corpus"><tbody></tbody></table></div>
+      </div>
+      <div>
+        <h3>Agent behaviour pattern</h3>
+        <div class="tablewrap"><table id="behavior"><tbody></tbody></table></div>
+        <h3>Intervention timing</h3>
+        <div class="tablewrap"><table id="timing"><tbody></tbody></table></div>
+      </div>
     </div>
-    <p class="note">Every dialogue is <code>tool_call</code> type. Each carries
-      a category, a candidate-tool set with distractors, an
-      <code>act_timing</code> (post-turn / end-of-dialogue / interrupt), an
-      agent behaviour pattern, per-turn emotion and intensity labels, and the
-      reference call with its simulated response.</p>
 
-    <h3>Emotion on the turns</h3>
+    <h3>Annotation</h3>
+    <p class="small">For each human turn, the observed speech prefix is paired
+      with <code>y<sub>t</sub> = (b<sub>t</sub>, r<sub>t</sub>)</code>. An
+      immediately following agent turn gives <code>b<sub>t</sub> = 1</code>;
+      otherwise the target is <code>(0, ⊥)</code>. Among positives, a turn-level
+      interruption annotation takes precedence, then the dialogue-level
+      <code>end_of_dialogue</code> attribute, and the rest become
+      <code>NOW</code>.</p>
+
+    <h3>Synthesised speech quality</h3>
+    <div id="quality" class="meters"></div>
+    <p class="note">Low WER with high UTMOS and speaker similarity suggests the
+      synthesised utterances largely preserve the intended linguistic content and
+      speaker identity while sounding natural. WER is computed with
+      Whisper-large-v3; speaker similarity with Resemblyzer.</p>
+
+    <h3>LLM-as-a-judge validation</h3>
     <div class="tablewrap">
-      <table id="emtable">
-        <thead><tr><th class="l">Emotion</th><th>Train turns</th>
-          <th>Test turns</th><th>Share (test)</th></tr></thead>
+      <table id="judge">
+        <thead><tr><th class="l">Dimension</th><th>Mean (1–5)</th>
+          <th>Scoring ≥ 4</th></tr></thead>
         <tbody></tbody>
       </table>
     </div>
-    <p class="note">Delivery is acted, not annotated after the fact: the text is
-      synthesised with the labelled emotion. A fully neutral resynthesis of the
-      test split — same words, same speaker, same turn order, delivery removed —
-      ships alongside it as a control.</p>
+    <p class="note">300 examples. <b id="judgeall"></b> of examples score at
+      least 4 on all four dimensions, with timing consistency showing the
+      greatest remaining variation.</p>
+  </div>
+</section>
+
+<section id="diagnostic">
+  <div class="wrap">
+    <h2>What breaks without an explicit request</h2>
+    <p class="lede">Each dialogue is evaluated twice — once with the explicit
+      agent invocation, once after removing it — with all other context and
+      labels unchanged.</p>
+
+    <figure class="narrow">
+      <img src="assets/fig/invocation_roc_v2.png"
+           alt="Intervention recall against false positive rate; arrows point from with-invocation to without-invocation for both models.">
+      <figcaption><a class="dl" href="assets/fig/invocation_roc_v2.pdf">PDF</a>
+        <b>Effect of explicit invocation on intervention decisions.</b> Arrows
+        show the change from with (grey circles) to without explicit invocation
+        (red squares): lower intervention recall, higher FPR, and lower 4-class
+        Macro-F1.</figcaption>
+    </figure>
+
+    <div class="tablewrap">
+      <table id="macro">
+        <thead><tr><th class="l">Model</th><th>Macro-F1 with invocation</th>
+          <th>without</th><th>Δ</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <h3>Argument grounding, and whether reasoning helps</h3>
+    <div class="tablewrap">
+      <table id="diag">
+        <thead><tr><th class="l">Model</th><th class="l">Condition</th>
+          <th>Tool Acc.</th><th>JGA</th><th>Slot F1</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <p class="note">Both baselines reach high Tool Accuracy (88.8–95.4%) with low
+      JGA (5.0–6.2%) and Slot F1 (23.9–30.4%). The reasoning-prompted variant
+      improves tool selection for both models, changes JGA by only ±0.2 points,
+      and lowers Slot F1 in both cases — so reasoning alone does not consistently
+      improve argument grounding.</p>
+  </div>
+</section>
+
+<section id="method">
+  <div class="wrap">
+    <h2>Adaptation</h2>
+    <p class="lede">A single LALM serves as both <code>π<sub>θ</sub></code> and
+      <code>φ<sub>θ</sub></code>, conditioned on task-specific instructions.</p>
+    <div class="cards">
+      <div class="card">
+        <h3>Supervised fine-tuning</h3>
+        <p><code>π<sub>θ</sub></code> is supervised with <code>y<sub>t</sub></code>
+          on both silent and non-silent turns; <code>φ<sub>θ</sub></code> with
+          gold reference calls in annotated actionable contexts. Token-level NLL
+          on both.</p>
+      </div>
+      <div class="card">
+        <h3>Grounding-aware reward</h3>
+        <p>GRPO from the SFT checkpoint, with
+          <code>R = 𝟙[τ̂ = τ*] · F1<sub>slot</sub>(p̂, p*)</code>. An incorrect
+          tool earns zero; a correct one earns graded credit for argument
+          completeness and correctness.</p>
+      </div>
+      <div class="card">
+        <h3>Training setup</h3>
+        <p>LoRA on the LLM backbone and audio aligner, encoder frozen. KL
+          regularisation (β = 0.04), 8 samples per prompt at T = 0.8, top-p 0.9,
+          one epoch on 4×H100, lr 5×10⁻⁶.</p>
+      </div>
+    </div>
   </div>
 </section>
 
 <section id="results">
   <div class="wrap">
     <h2>Results</h2>
-    <p class="lede">All arms on the same 20,422 Stage&nbsp;1 decision rows and
-      1,581 Stage&nbsp;2 calls of the test split. <b>Audio</b> is how much of
-      the conversation the model hears as speech rather than as transcript;
-      <b>context</b> is how far back the prompt reaches.</p>
-
-    <div class="filters" id="filters">
-      <button type="button" data-f="all" aria-pressed="true">All</button>
-      <button type="button" data-f="base" aria-pressed="false">Off-the-shelf</button>
-      <button type="button" data-f="sft" aria-pressed="false">Adapted</button>
-    </div>
+    <p class="lede">Intervention and tool calling with full-dialogue audio input.
+      <b>SFT + RL</b> reports mean ± standard deviation over three random seeds.
+      <i>Always Silent</i> is the majority-class baseline — read Accuracy against
+      it, never alone.</p>
 
     <div class="tablewrap">
-      <table id="restable">
-        <thead><tr>
-          <th class="l">Model</th><th class="l">Audio</th><th class="l">Context</th>
-          <th>Acc</th><th>Speak P</th><th>Speak R</th><th>Speak F1</th>
-          <th>URGENT F1</th><th>Tool acc</th><th>Params exact</th>
-        </tr></thead>
+      <table id="main">
+        <thead>
+          <tr>
+            <th class="l" rowspan="2">Model</th><th class="l" rowspan="2">Checkpoint</th>
+            <th colspan="3" class="grp">Intervention <i>(when to act)</i></th>
+            <th colspan="3" class="grp">Tool calling <i>(what to call)</i></th>
+          </tr>
+          <tr>
+            <th>Acc. ↑</th><th>Macro-F1 ↑</th><th>Speak-F1 ↑</th>
+            <th>Tool Acc. ↑</th><th>JGA ↑</th><th>Slot F1 ↑</th>
+          </tr>
+        </thead>
         <tbody></tbody>
       </table>
     </div>
-    <p class="note"><b>Acc</b> is 4-way decision accuracy, which an always-silent
-      policy already scores 0.845 on — read it next to Speak F1, never alone.
-      <b>Params exact</b> is joint goal accuracy on Stage&nbsp;2. Best value in
-      each column is highlighted. Generated from
-      <code>work/results/exp4_v5t2/*.summary.json</code>; nothing is transcribed
-      by hand.</p>
+    <p class="note">Speak-F1 collapses the three non-silent labels to measure
+      whether the model correctly decides to intervene at all. SFT raises
+      Speak-F1 by up to <b>54.7</b> points over Base and more than doubles the
+      always-silent Macro-F1 reference; RLVR then raises JGA from 57.4–61.5% to
+      <b>66.3–71.1%</b> and Slot F1 to <b>87.0–88.0%</b> while intervention
+      performance is preserved.</p>
   </div>
 </section>
 
-<section id="findings">
+<section id="emotion">
   <div class="wrap">
-    <h2>What we found</h2>
-    <p class="lede">Four figures, in the order the paper reads them.</p>
+    <h2>Does vocal delivery matter?</h2>
+    <p class="lede">The original audio is compared with a neutral-delivery
+      resynthesis of the same utterances — lexical content preserved, vocal
+      emotion removed.</p>
 
-    <figure>
-      <img src="assets/fig/rq1_calibration.png"
-           alt="Three panels: predicted label distributions against the gold prior, per-class F1 against an all-silent baseline, and missed intervention against false interruption.">
-      <figcaption><a class="dl" href="assets/fig/rq1_calibration.pdf">PDF</a>
-        <b>Off-the-shelf audio LMs do not fail randomly.</b> One model
-        reproduces the gold label prior almost exactly while the other inverts
-        it; neither separates the three intervention classes, and the two land
-        at opposite corners of the missed-intervention / false-interruption
-        trade-off.</figcaption>
-    </figure>
-
-    <figure>
-      <img src="assets/fig/invocation_roc_v4.png"
-           alt="Intervention decisions in ROC space, with and without an explicit spoken invocation.">
-      <figcaption><a class="dl" href="assets/fig/invocation_roc_v4.pdf">PDF</a>
-        <b>Removing the spoken invocation moves the operating point, not the
-        ranking.</b> The same models in ROC space with and without an explicit
-        request, including Audio Flamingo 3.</figcaption>
-    </figure>
-
-    <figure>
-      <img src="assets/fig/intervention_errors.png"
-           alt="Distribution of the gap between readiness and trigger, false-positive rates on ready contexts, and the same split inside fixed turn-index bands.">
-      <figcaption><a class="dl" href="assets/fig/intervention_errors.pdf">PDF</a>
-        <b>Being able to act is not a corner case.</b> Every argument the
-        reference call needs has been spoken a median of three turns before the
-        dialogue's own trigger fires — 6,722 of the 17,260 non-intervention
-        decision points. Panel (c) is the caveat, measured: absolute turn
-        position is the dominant driver on its own.</figcaption>
-    </figure>
-
-    <figure>
-      <img src="assets/fig/implicit_toolcall.png"
-           alt="Tool selection against argument grounding, the slot score split into naming and filling, and accuracy against the number of arguments required.">
-      <figcaption><a class="dl" href="assets/fig/implicit_toolcall.pdf">PDF</a>
-        <b>Selection survives, grounding does not.</b> An untuned model picks
-        the right tool almost every time and fills its arguments almost never,
-        from the same generations. Adaptation fixes argument <i>naming</i>
-        almost completely and leaves value extraction as the residual
-        error.</figcaption>
-    </figure>
-
-    <figure>
+    <figure class="narrow">
       <img src="assets/fig/emotional_delivery.png"
-           alt="An acoustic emotion probe before and after neutral resynthesis, beside the model's decision scores on the same rows.">
+           alt="Emotion probes before and after neutral resynthesis, beside intervention and URGENT recall under both conditions.">
       <figcaption><a class="dl" href="assets/fig/emotional_delivery.pdf">PDF</a>
-        <b>Emotional delivery, tested by removing it.</b> Panel (a) is the
-        manipulation check — an acoustic probe can no longer hear the emotion
-        after resynthesis. Panel (b) is the behaviour on the same rows, drawn
-        the same way, so the two panels can be read against each
-        other.</figcaption>
+        <b>Effect of neutralizing emotional delivery.</b> (a) Emotion probes
+        verify that neutral resynthesis reduces vocal-emotion cues while
+        retaining lexical content. (b) Intervention and <code>URGENT</code>
+        recall compare original and neutral delivery to test whether vocal cues
+        affect intervention decisions.</figcaption>
     </figure>
-  </div>
-</section>
 
-<section id="resources">
-  <div class="wrap">
-    <h2>Resources</h2>
-    <!-- ======================================================= EDIT ME (4/4)
-         Replace the placeholders once the release targets exist. Keep the
-         anonymity constraint in mind: a personal Drive link or a named HF
-         account de-anonymises the submission. -->
-    <div class="cards">
-      <div class="card">
-        <h3>Benchmark data</h3>
-        <p>3,007 dialogues with audio, per-turn emotion labels and reference
-          calls, plus the neutral-resynthesis control split.
-          <span class="todo">release link</span></p>
+    <div class="two">
+      <div>
+        <h3>Manipulation check</h3>
+        <div class="tablewrap">
+          <table id="probe">
+            <thead><tr><th class="l">Probe</th><th>Original</th>
+              <th>Neutral</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
-      <div class="card">
-        <h3>Code</h3>
-        <p>Dataset construction, the two-stage evaluators, and every figure on
-          this page.
-          <a href="https://github.com/ICASSP2027-PACT/PACT">github.com/ICASSP2027-PACT</a></p>
-      </div>
-      <div class="card">
-        <h3>Audio samples</h3>
-        <p>Original and neutral-resynthesis pairs for the same turns, so the
-          manipulation can be heard rather than taken on trust.
-          <span class="todo">add samples</span></p>
+      <div>
+        <h3>Behaviour on the same rows</h3>
+        <div class="tablewrap">
+          <table id="behav">
+            <thead><tr><th class="l">Endpoint</th><th>Change</th>
+              <th>Test</th></tr></thead>
+            <tbody></tbody>
+          </table>
+        </div>
       </div>
     </div>
-    <!-- ===================================================== /EDIT ME (4/4) -->
-
-    <h3>Rebuilding this page</h3>
-    <p class="lede" style="margin-bottom:.75rem">Every number comes from the run
-      summaries. After a new arm lands, add one line to <code>ARMS</code> and
-      re-run:</p>
-<pre><code>python tools/build_data.py     # -&gt; data/*.json and assets/js/data.js
-python -m http.server 8000     # open http://localhost:8000</code></pre>
+    <p class="note">Both probes approach chance after resynthesis, so the
+      manipulation worked. The larger change in <code>URGENT</code> recall
+      suggests vocal emotion can provide an additional cue for intervention
+      decisions beyond lexical content.</p>
   </div>
 </section>
 
 <section id="cite">
   <div class="wrap">
     <h2>Citation</h2>
-    <p class="lede">Anonymous while the paper is under review.</p>
-<pre><code>@inproceedings{anonymous2027pact,
-  title     = {PACT: {TODO} full title},
-  author    = {Anonymous},
+<pre><code>@inproceedings{jeong2027whentoact,
+  title     = {When to Act, What to Call: Toward Proactive Voice Agents},
+  author    = {Jeong, Jihoon and Jeon, Yejin and Jang, Jihyoung and
+               Kim, Hyounghun and Adelani, David Ifeoluwa and Subakan, Cem},
   booktitle = {Submitted to IEEE International Conference on Acoustics,
                Speech and Signal Processing (ICASSP)},
-  year      = {2027},
-  note      = {Under review}
+  year      = {2027}
 }</code></pre>
+    <p class="note">Jihoon Jeong and Yejin Jeon contributed equally. All
+      artifacts will be open-sourced.</p>
   </div>
 </section>
 
 <footer>
   <div class="wrap">
-    <p><b>Anonymity.</b> This page accompanies a double-blind submission. It
-      carries no author names, affiliations, contact addresses or links to
-      personal accounts, and it should not until the review period ends.</p>
-    <p>Figures and tables are regenerated from the evaluation logs by
-      <code>tools/build_data.py</code>.</p>
+    <p>Every number on this page is transcribed from the submitted paper;
+      <code>assets/js/data.js</code> names the table each block came from.</p>
   </div>
 </footer>
 

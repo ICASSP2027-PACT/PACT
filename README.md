@@ -1,71 +1,76 @@
-# PACT — project page
+# When to Act, What to Call: Toward Proactive Voice Agents
 
-Static project page for the ICASSP 2027 submission. No build step, no
-dependencies: GitHub Pages serves `index.html` as it is.
+Project page for the ICASSP 2027 submission. Static: no build step, no
+dependencies — GitHub Pages serves `index.html` as it is.
 
 ## Publishing
 
-Settings → Pages → Build from branch → `main` / `(root)`. `.nojekyll` is
-present so `assets/` is served verbatim.
+Settings → Pages → Build from branch → `main` / `(root)`. `.nojekyll` is present
+so `assets/` is served verbatim.
 
 ## Before it goes public
 
-Four blocks in `index.html` are marked `EDIT ME (n/4)` and every unfilled value
-is wrapped in `<span class="todo">`, so they are visible on the rendered page
-rather than hidden in the source. Search for `todo` to find them all.
+One block in `index.html` is marked `EDIT ME (1/2)` — the paper / arXiv /
+dataset URLs. Drop `aria-disabled` from each link once it resolves.
 
-| # | What | Where |
-|---|------|-------|
-| 1 | Title and the PACT expansion | `<header>` |
-| 2 | Paper / arXiv / dataset URLs — and drop `aria-disabled` from each link that now works | `.buttons` |
-| 3 | Abstract, verbatim from the submission | `.notice` |
-| 4 | Release links for data and audio samples | `#resources` |
+**The draft's abstract points readers at the wrong page.** `sections/0_abstract.tex`
+links to `tgsr-icassp2027.github.io/Timestamp-Grounded-Speech-Reasoning/`, which
+is a different project. That URL should become this one (`EDIT ME (2/2)` is the
+reminder, in the same block).
 
-Also fill the title in the BibTeX block under `#cite`.
+## Where the numbers come from
 
-**Anonymity.** The page is written for double-blind review: no names,
-affiliations, contact addresses, or links to personal accounts. A personal
-Drive folder or a named Hugging Face account in the release links would
-de-anonymise the submission just as effectively as a byline.
+`assets/js/data.js` — and only there. Every block carries the section and table
+it was transcribed from:
 
-## Regenerating the numbers
+| Block | Source in `PACT_paper/` |
+|---|---|
+| `dataset` | `sections/3_dataset.tex` — `tab:data`, `fig:wer-sim-utmos`, `subsec:dataset_validation` |
+| `diagnostic` | `sections/4_preliminary.tex` — `tab:toolcall_invocation_diagnostic` + prose |
+| `main` | `sections/5_experiments.tex` — `tab:all_audio_results` |
+| `emotion` | `sections/5_experiments.tex` — `sec:input_analysis` |
 
-Nothing on the page is a hand-typed metric. `tools/build_data.py` reads
-`../work/results/exp4_v5t2/*.summary.json` and the dataset splits, and writes:
-
-- `data/results.json`, `data/dataset.json` — for anything that wants the data
-- `assets/js/data.js` — what the page actually reads (a sibling `.json` cannot
-  be fetched under `file://`, and this page gets opened off disk)
-
-```bash
-source /home/jihoojo3/ENV/bin/activate
-python tools/build_data.py
-python -m http.server 8000      # http://localhost:8000
-```
-
-To put a new evaluation arm on the page, add one line to `ARMS` in
-`tools/build_data.py` and re-run it. Arms not listed there are skipped, which is
-how the aligner ablation stays off the table.
+An earlier version of this page generated the tables from
+`work/results/*.summary.json`. That was wrong for a project page: the paper's
+tables are not a straight dump of those logs — `SFT + RL` is averaged over three
+seeds, several arms were re-run, and the dataset table counts domains and
+relationship types the split files do not carry. A page whose numbers disagree
+with the paper is worse than no page. **When the paper changes, edit
+`data.js` and nothing else.**
 
 ## Figures
 
-`assets/fig/` holds a PNG and a PDF for each figure, copied from
-`../work/figures/`. They are copies, not symlinks, so the repo is
-self-contained — re-copy after regenerating a figure:
+`assets/fig/` holds the three figures the paper actually includes, as PNG (for
+the page) and PDF (to download). They are copies, so the repo is
+self-contained. After recompiling a figure:
 
 ```bash
-cp ../work/figures/{fig1_overview,rq1_calibration,invocation_roc_v4,\
-intervention_errors,implicit_toolcall,emotional_delivery}.{png,pdf} assets/fig/
+cd ../PACT_paper/figures
+D=../../PACT/assets/fig
+for f in overview_audioCA invocation_roc_v2 emotional_delivery; do
+  pdftocairo -png -r 400 -singlefile "$f.pdf" "$D/$f"   # -r 200 for overview
+  cp "$f.pdf" "$D/"
+done
 ```
+
+`dataset_configuration.png` and `overview_audio_r1.png` exist in the paper
+folder but are commented out of `main.tex`, so they are deliberately not here.
+
+## Checking it locally
+
+```bash
+python -m http.server 8000     # http://localhost:8000
+```
+
+`data.js` is a script, not a fetched `.json`, so opening `index.html` straight
+off disk works too.
 
 ## Layout
 
 ```
 index.html              the page
 assets/css/style.css    palette matches the paper figures exactly
+assets/js/data.js       every number, with its source named
 assets/js/app.js        renders the tables, remembers the theme
-assets/js/data.js       generated — do not edit
-assets/fig/             figures (png for the page, pdf to download)
-data/*.json             generated
-tools/build_data.py     the only place a number enters the site
+assets/fig/             the paper's three figures, png + pdf
 ```
