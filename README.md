@@ -10,13 +10,16 @@ so `assets/` is served verbatim.
 
 ## Before it goes public
 
-One block in `index.html` is marked `EDIT ME (1/2)` — the paper / arXiv /
-dataset URLs. Drop `aria-disabled` from each link once it resolves.
+The page carries no outbound links at all — the paper / arXiv / code / dataset
+button row was removed, so nothing here points anywhere that does not exist yet
+and there is no placeholder left to forget. Adding the row back later means
+writing it again in the `<header>`, together with `.buttons` / `.btn` rules in
+the stylesheet.
 
 **The draft's abstract points readers at the wrong page.** `sections/0_abstract.tex`
 links to `tgsr-icassp2027.github.io/Timestamp-Grounded-Speech-Reasoning/`, which
-is a different project. That URL should become this one (`EDIT ME (2/2)` is the
-reminder, in the same block).
+is a different project. That URL should become this one — a paper edit, not a
+page edit.
 
 ## Where the numbers come from
 
@@ -28,11 +31,14 @@ it was transcribed from:
 | `dataset` | `sections/3_dataset.tex` — `tab:data`, `fig:wer-sim-utmos`, `subsec:dataset_validation` |
 | `diagnostic` | `sections/4_preliminary.tex` — `tab:toolcall_invocation_diagnostic` + prose |
 
-The main results table (`tab:all_audio_results`) and the emotional-delivery
-analysis (`sec:input_analysis`) are deliberately **not** on the page — the page
-stops at the diagnosis and the method, and sends the reader to the paper for the
-outcome. Re-adding either means restoring its `data.js` block, its `<section>`,
-and the render call in `app.js`.
+The page deliberately stops at the diagnosis. The method
+(`sec:experiments`), the main results table (`tab:all_audio_results`), the
+emotional-delivery analysis (`sec:input_analysis`) and the BibTeX block were all
+removed — the page states the problem, the benchmark and what breaks, and sends
+the reader to the paper for everything after that. Re-adding a results section
+means restoring its `data.js` block, its `<section>` and the render call in
+`app.js`; the method and citation sections were static HTML and would just be
+written again.
 
 An earlier version of this page generated the tables from
 `work/results/*.summary.json`. That was wrong for a project page: the paper's
