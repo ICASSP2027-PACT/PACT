@@ -187,8 +187,9 @@ dl.labels dd { margin: 0; color: var(--soft); }
 footer {
   margin-top: 4rem; padding: 2rem 0 3rem;
   border-top: 1px solid var(--grid);
-  font-size: .82rem; color: var(--muted);
+  font-size: .8rem; color: var(--muted); text-align: center;
 }
+footer p { margin: 0; }
 
 @media (max-width: 760px) {
   .cards { grid-template-columns: 1fr; }
