@@ -44,6 +44,12 @@ timing, over 26 domains and 30 distinct tools.
 
 To swap an example, pin it in `PINNED`; to change how many, set `N_EXAMPLES`.
 
+`decision_rationale` and the candidate-tool list are read but **not shown**:
+the rationale is annotation prose that names the agent by its alias, and the
+candidate list only repeats what the tool name already says. The reference call
+is rendered on the agent's own turn rather than in a footer — in the INTERRUPT
+dialogues that turn is not the last one, which is the point.
+
 One field is inferred rather than read: `anchor` / `gives`, the first human turn
 whose text contains an argument value **verbatim**. It is a lower bound on when
 the argument became available — a value settled by paraphrase gets no anchor,
@@ -62,8 +68,14 @@ it was transcribed from:
 
 | Block | Source in `PACT_paper/` |
 |---|---|
-| `dataset` | `sections/3_dataset.tex` — `tab:data`, `fig:wer-sim-utmos`, `subsec:dataset_validation` |
+| `dataset.headline` | `sections/3_dataset.tex` — `tab:data` |
 | `diagnostic` | `sections/4_preliminary.tex` — `tab:toolcall_invocation_diagnostic` + prose |
+
+The page shows four headline figures from `tab:data` and nothing else from
+the dataset section: the rest of that table, the speech-quality measures
+(UTMOS / WER / speaker similarity) and the LLM-as-a-judge table are in the
+paper, and the worked examples carry the corpus far better than a count of
+relationship types does.
 
 The page deliberately stops at the diagnosis. The method
 (`sec:experiments`), the main results table (`tab:all_audio_results`), the

@@ -15,6 +15,8 @@
 window.PACT_DATA = {
 
   /* ---- sections/3_dataset.tex, tab:data ------------------------------- */
+  /* Only the four headline figures are shown; the rest of tab:data, the
+     speech-quality measures and the LLM-judge table are in the paper. */
   dataset: {
     headline: [
       ["3,007", "spoken dialogues"],
@@ -22,38 +24,6 @@ window.PACT_DATA = {
       ["134", "unique domains"],
       ["23", "speaker voices"]
     ],
-    corpus: [
-      ["Avg. turns / dialogue", "15.65"],
-      ["Unique domains", "134"],
-      ["Relationship types", "10"],
-      ["Speaker voices", "23"],
-      ["Turns with disfluency", "7,047"],
-      ["Total dialogues", "3,007"]
-    ],
-    behavior: [
-      ["Suggest & execute", "1,003"],
-      ["Clarify, suggest & execute", "1,014"],
-      ["Execute only", "990"]
-    ],
-    timing: [
-      ["Post-turn response", "1,821"],
-      ["End-of-dialogue", "598"],
-      ["Interruption", "588"]
-    ],
-    /* fig:wer-sim-utmos */
-    quality: [
-      ["UTMOS", 4.17, 5, "4.17"],
-      ["WER", 6.19, 20, "6.19%"],
-      ["Speaker similarity", 91.5, 100, "91.50%"]
-    ],
-    /* subsec:dataset_validation - LLM-as-a-judge, 300 examples, 1-5 scale */
-    judge: [
-      ["Intervention appropriateness", "4.93", "99.7%"],
-      ["Timing consistency", "4.33", "82.0%"],
-      ["Response strategy", "4.57", "83.3%"],
-      ["Argument grounding", "4.78", "96.0%"]
-    ],
-    judge_all: "67.0%"
   },
 
   /* ---- sections/4_preliminary.tex, tab:toolcall_invocation_diagnostic -- */

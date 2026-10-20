@@ -35,34 +35,6 @@
     sw.appendChild(d);
   });
 
-  D.dataset.corpus.forEach(function (r, i) {
-    // the last line is the corpus total, which the paper shades
-    row(tbody("corpus"), r, { cls: i === D.dataset.corpus.length - 1 ? "total" : "" });
-  });
-  D.dataset.behavior.forEach(function (r) { row(tbody("behavior"), r); });
-  D.dataset.timing.forEach(function (r) { row(tbody("timing"), r); });
-
-  /* A bar per measure rather than a number: the paper draws these as bars
-     because the scales differ (UTMOS out of 5, WER out of 20%, similarity out
-     of 100%) and a bare triple of numbers invites reading them as comparable. */
-  var q = document.getElementById("quality");
-  D.dataset.quality.forEach(function (m) {
-    var wrap = el("div", "meter");
-    var head = el("div", "meter-head");
-    head.appendChild(el("span", "meter-name", m[0]));
-    head.appendChild(el("b", "meter-val", m[3]));
-    var bar = el("div", "meter-bar");
-    var fill = el("i");
-    fill.style.width = (m[1] / m[2] * 100).toFixed(1) + "%";
-    bar.appendChild(fill);
-    var scale = el("span", "meter-scale", "0 – " + m[2] + (m[0] === "UTMOS" ? "" : "%"));
-    wrap.appendChild(head); wrap.appendChild(bar); wrap.appendChild(scale);
-    q.appendChild(wrap);
-  });
-
-  D.dataset.judge.forEach(function (r) { row(tbody("judge"), r); });
-  document.getElementById("judgeall").textContent = D.dataset.judge_all;
-
   /* ---------------------------------------------------------- diagnostic */
   D.diagnostic.macro_f1.forEach(function (m) {
     var d = m[2] - m[1];
@@ -130,12 +102,8 @@
     exbox.textContent = "";
 
     var head = el("div", "exhead");
-    if (e.why) head.appendChild(el("div", "exwhy", e.why));
-    var meta = el("div", "exmeta");
-    meta.appendChild(el("code", "cand right", e.tool));
-    meta.appendChild(document.createTextNode(" \u00b7 " + e.category));
-    head.appendChild(meta);
     head.appendChild(el("p", "exscen", e.summary));
+    if (e.why) head.appendChild(el("div", "exwhy", e.why));
     exbox.appendChild(head);
 
     var list = el("ol", "turns");
@@ -163,6 +131,19 @@
         t.gives.forEach(function (k) { g.appendChild(el("code", "slot", k)); });
         body.appendChild(g);
       }
+      // The reference call belongs ON the turn that issues it, not in a
+      // footer: that is the moment the example exists to show, and in the
+      // INTERRUPT dialogues the agent turn is not even the last one.
+      if (t.agent) {
+        var call = el("div", "callbox");
+        call.appendChild(el("div", "exlab", "issues"));
+        var pre = el("pre", "calljson");
+        pre.textContent = e.tool + "(\n" + Object.keys(e.params).map(function (k) {
+          return "  " + k + " = " + JSON.stringify(e.params[k]);
+        }).join(",\n") + "\n)";
+        call.appendChild(pre);
+        body.appendChild(call);
+      }
       li.appendChild(body);
 
       var lab = el("div", "tlabel");
@@ -173,27 +154,6 @@
     });
     exbox.appendChild(list);
 
-    var foot = el("div", "exfoot");
-    var call = el("div", "excall");
-    call.appendChild(el("div", "exlab", "Reference tool call"));
-    var pre = el("pre", "calljson");
-    pre.textContent = e.tool + "(\n" + Object.keys(e.params).map(function (k) {
-      return "  " + k + " = " + JSON.stringify(e.params[k]);
-    }).join(",\n") + "\n)";
-    call.appendChild(pre);
-    var cand = el("div", "excand");
-    cand.appendChild(el("span", "exlab", "Candidates offered: "));
-    e.candidates.forEach(function (c) {
-      cand.appendChild(el("code", c === e.tool ? "cand right" : "cand", c));
-    });
-    call.appendChild(cand);
-    foot.appendChild(call);
-
-    var rat = el("div", "exrat");
-    rat.appendChild(el("div", "exlab", "Why the agent waits"));
-    rat.appendChild(el("p", "small", e.rationale));
-    foot.appendChild(rat);
-    exbox.appendChild(foot);
   }
 
   function select(i) {

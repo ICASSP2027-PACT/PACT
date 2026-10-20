@@ -214,8 +214,13 @@ def main():
     print(f"\n[examples] {len(out)} dialogues, "
           f"{sum(len(e['turns']) for e in out)} turns")
     print("  timing    :", dict(Counter(e["timing"] for e in out)))
-    print("  domains   :", len({e["category"] for e in out}),
-          "distinct /", len(out))
+    # "domain" the way tab:data counts it: the service before the dot, which
+    # is the field that gives the paper its 134 over the whole corpus. The
+    # `category` field is a different and coarser thing (40 values) - do not
+    # report it as a domain count on the page.
+    print("  domains   :", len({e["tool"].split(".")[0] for e in out}),
+          "distinct /", len(out), "  (categories:",
+          len({e["category"] for e in out}), ")")
     print("  tools     :", len({e["tool"] for e in out}), "distinct")
     print(f"  {OUT_JS.name} {OUT_JS.stat().st_size // 1024} KB, "
           f"audio {total // 1024 // 1024} MB ({total // 1024} KB)")
