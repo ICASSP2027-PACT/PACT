@@ -181,6 +181,10 @@ footer {
   font-size: .8rem; color: var(--muted); text-align: center;
 }
 footer p { margin: 0; }
+.built { margin-top: .35rem !important; font-size: .74rem; opacity: .75; }
+.built a { color: inherit; text-decoration: underline;
+           text-underline-offset: 2px; }
+.built a:hover { color: var(--ink); }
 
 @media (max-width: 760px) {
   .cards { grid-template-columns: 1fr; }
