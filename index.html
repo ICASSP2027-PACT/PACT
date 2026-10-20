@@ -141,10 +141,6 @@
         </dl>
       </div>
     </div>
-    <p class="note">Separating intervention detection from timing classification
-      distinguishes a missed intervention from an error in intervention type.
-      Evaluation covers <b>20,422</b> human-turn contexts for Stage 1 and
-      <b>1,581</b> examples for Stage 2.</p>
   </div>
 </section>
 
@@ -157,6 +153,23 @@
       IndexTTS2.</p>
 
     <div class="stats" id="stats"></div>
+
+    <h3>Worked examples</h3>
+    <p class="lede">Thirty dialogues from the test split, verbatim — ten per
+      intervention type, across 26 domains and 30 distinct tools. Every turn is
+      a Stage&nbsp;1 decision; the arguments of the reference call arrive
+      scattered through the conversation, and nobody ever asks the agent for
+      anything. Play a turn to hear the delivery the label was assigned to.</p>
+
+    <div class="expicker">
+      <div class="exfilter" id="exfilter"></div>
+      <div class="exgrid" id="exgrid"></div>
+    </div>
+    <div class="exnav"><button type="button" id="exprev">‹ Prev</button>
+      <span id="excount"></span>
+      <button type="button" id="exnext">Next ›</button></div>
+    <div id="example"></div>
+    <audio id="player" preload="none"></audio>
 
     <div class="two">
       <div>
@@ -250,6 +263,7 @@
 </footer>
 
 <script src="assets/js/data.js"></script>
+<script src="assets/js/examples.js"></script>
 <script src="assets/js/app.js"></script>
 </body>
 </html>

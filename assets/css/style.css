@@ -238,3 +238,128 @@ td.down { color: var(--warn); }
   .two { grid-template-columns: 1fr; }
   .meters { grid-template-columns: 1fr; }
 }
+
+/* ------------------------------------------------- worked examples */
+/* Thirty is too many for a tab strip, so the picker is a filter row over a
+   scrolling grid of chips: the timing split stays visible, and the list never
+   pushes the example itself off the screen. */
+.expicker { border: 1px solid var(--grid); border-radius: var(--radius);
+            overflow: hidden; margin-bottom: .7rem; }
+.exfilter { display: flex; gap: .4rem; padding: .55rem .6rem;
+            background: var(--band); border-bottom: 1px solid var(--grid);
+            flex-wrap: wrap; }
+.exfbtn {
+  cursor: pointer; font-family: inherit; font-size: .72rem;
+  border: 1px solid var(--grid); border-radius: 999px;
+  background: var(--surface); color: var(--soft); padding: .2rem .7rem;
+}
+.exfbtn b { font-family: var(--mono); font-size: .68rem; color: inherit; }
+.exfbtn span { color: var(--muted); }
+.exfbtn[aria-pressed="true"] { background: var(--ink); color: var(--surface);
+                               border-color: var(--ink); }
+.exfbtn[aria-pressed="true"] span { color: var(--surface); opacity: .65; }
+
+.exgrid {
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: .3rem;
+  padding: .5rem; max-height: 13rem; overflow-y: auto;
+}
+.exitem {
+  display: flex; gap: .4rem; align-items: flex-start; text-align: left;
+  cursor: pointer; font-family: inherit; padding: .35rem .5rem;
+  border: 1px solid transparent; border-radius: 6px;
+  background: none; color: var(--soft); min-width: 0;
+}
+.exitem:hover { background: var(--band); }
+.exitem[aria-current="true"] { border-color: var(--ink); background: var(--band); }
+.exitext { min-width: 0; line-height: 1.25; }
+.exitext b { display: block; font-family: var(--mono); font-size: .7rem;
+             color: var(--ink); overflow: hidden; text-overflow: ellipsis;
+             white-space: nowrap; }
+.exitext span { font-size: .67rem; color: var(--muted); }
+.dot { width: .45rem; height: .45rem; border-radius: 50%; flex: none;
+       margin-top: .3rem; background: var(--muted); }
+.dot-NOW { background: var(--accent); }
+.dot-INTERRUPT { background: var(--warn); }
+.dot-AT_CLOSING { background: var(--ink); }
+
+.exnav { display: flex; align-items: center; gap: .6rem; margin-bottom: .8rem; }
+.exnav button {
+  cursor: pointer; font-family: inherit; font-size: .75rem;
+  border: 1px solid var(--grid); border-radius: 999px;
+  background: var(--surface); color: var(--soft); padding: .2rem .7rem;
+}
+.exnav button:hover { color: var(--ink); border-color: var(--muted); }
+#excount { font-size: .72rem; color: var(--muted);
+           font-variant-numeric: tabular-nums; }
+
+.exhead { margin-bottom: .9rem; }
+.exwhy {
+  font-size: .9rem; color: var(--ink);
+  border-left: 3px solid var(--accent); padding-left: .7rem;
+  margin-bottom: .55rem;
+}
+.exmeta { font-size: .78rem; color: var(--muted); }
+.exscen { margin: .3rem 0 0; font-size: .85rem; color: var(--soft); }
+
+/* Each turn is a decision point, so the label column is the spine of the
+   list: everything else is indented off it and SILENT is deliberately quiet. */
+ol.turns { list-style: none; margin: 0; padding: 0;
+           border: 1px solid var(--grid); border-radius: var(--radius);
+           overflow: hidden; }
+.turn { display: grid; grid-template-columns: 7.5rem 1fr 6.5rem;
+        gap: .6rem; padding: .5rem .7rem; align-items: start; }
+.turn + .turn { border-top: 1px solid var(--grid); }
+.turn.agent { background: var(--band); }
+.turn.act { background: var(--band); }
+.turn.act .tlabel .lab { color: var(--surface); background: var(--ink); }
+
+.tside { display: flex; align-items: center; gap: .35rem; flex-wrap: wrap; }
+.play {
+  width: 1.3rem; height: 1.3rem; flex: none; cursor: pointer; padding: 0;
+  border: 1px solid var(--grid); border-radius: 50%;
+  background: var(--surface); color: var(--soft); font-size: .55rem;
+  line-height: 1; display: grid; place-items: center;
+}
+.play:hover:not(:disabled) { color: var(--ink); border-color: var(--muted); }
+.play:disabled { opacity: .3; cursor: default; }
+.play[aria-pressed="true"] { background: var(--accent); color: #fff;
+                             border-color: var(--accent); }
+.who { font-size: .76rem; color: var(--soft); }
+.emo { font-size: .66rem; text-transform: lowercase; color: var(--muted);
+       border: 1px solid var(--grid); border-radius: 999px;
+       padding: .02rem .4rem; }
+.emo-anger, .emo-fear { color: var(--warn); border-color: var(--warn); }
+.emo-happy, .emo-surprise { color: var(--accent); border-color: var(--accent); }
+
+.ttext { margin: 0; font-size: .86rem; line-height: 1.5; }
+.turn.agent .ttext { font-style: italic; }
+.gives { margin-top: .3rem; display: flex; gap: .3rem; flex-wrap: wrap;
+         align-items: baseline; }
+.giveslab { font-size: .68rem; color: var(--muted); }
+code.slot { font-size: .7rem; background: var(--accent-wash);
+            color: var(--accent); padding: .05rem .35rem; border-radius: 4px; }
+
+.tlabel { text-align: right; }
+.lab { font-family: var(--mono); font-size: .66rem; letter-spacing: .02em;
+       border-radius: 4px; padding: .1rem .35rem; }
+.lab-SILENT { color: var(--muted); }
+.lab-AGENT { color: var(--accent); }
+
+.exfoot { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;
+          margin-top: .9rem; }
+.exlab { font-size: .7rem; text-transform: uppercase; letter-spacing: .06em;
+         color: var(--muted); margin-bottom: .35rem; }
+.calljson { margin: 0; background: var(--band); border: 1px solid var(--grid);
+            border-radius: var(--radius); padding: .7rem .8rem;
+            font-family: var(--mono); font-size: .75rem; line-height: 1.5;
+            overflow-x: auto; color: var(--ink); }
+.excand { margin-top: .6rem; }
+code.cand { font-size: .7rem; color: var(--muted); background: var(--band);
+            padding: .05rem .35rem; border-radius: 4px; margin-right: .25rem; }
+code.cand.right { color: var(--ink); border: 1px solid var(--grid); }
+
+@media (max-width: 760px) {
+  .turn { grid-template-columns: 1fr; gap: .3rem; }
+  .tlabel { text-align: left; }
+  .exfoot { grid-template-columns: 1fr; }
+}

@@ -21,6 +21,40 @@ links to `tgsr-icassp2027.github.io/Timestamp-Grounded-Speech-Reasoning/`, which
 is a different project. That URL should become this one — a paper edit, not a
 page edit.
 
+## Worked examples
+
+The thirty dialogues in the Benchmark section are **generated**, not written:
+`tools/build_examples.py` reads them out of
+`../dialogue_dataset_v5_260826/combined/test/dataset.jsonl`, derives the
+Stage 1 label with the paper's own annotation rule, and re-encodes the released
+per-turn wavs to MP3.
+
+```bash
+python tools/build_examples.py     # -> assets/js/examples.js, assets/audio/
+```
+
+`PINNED` names three ids vetted by hand — one per intervention timing, each the
+clearest case of its kind — and they open the list. `pick_rest()` fills the
+remaining `N_EXAMPLES - 3` with a greedy score that penalises a timing, domain,
+tool or behaviour pattern already represented, which is what stops the picker
+filling up on the one domain with the most clean dialogues (Open Data has 367
+of the 1,581 test dialogues). The pool is sorted and ties break on dialogue id,
+so a re-run gives the same thirty. The current set is 10 / 10 / 10 across
+timing, over 26 domains and 30 distinct tools.
+
+To swap an example, pin it in `PINNED`; to change how many, set `N_EXAMPLES`.
+
+One field is inferred rather than read: `anchor` / `gives`, the first human turn
+whose text contains an argument value **verbatim**. It is a lower bound on when
+the argument became available — a value settled by paraphrase gets no anchor,
+and `open_now: true` or an ISO timestamp never will — which is why the page
+labels it "first spoken verbatim" and not "when the argument became known".
+
+Audio is 48 kbps mono MP3: 393 turns, about 35 minutes, 13 MB. It is the bulk
+of the repository and it is all fetched on demand (`preload="none"` on the one
+shared `<audio>`), so it costs a visitor nothing until they press play. Change
+`AUDIO_KBPS` and re-run if that trade is wrong.
+
 ## Where the numbers come from
 
 `assets/js/data.js` — and only there. Every block carries the section and table
@@ -79,9 +113,12 @@ off disk works too.
 ## Layout
 
 ```
-index.html              the page
-assets/css/style.css    palette matches the paper figures exactly
-assets/js/data.js       every number, with its source named
-assets/js/app.js        renders the tables, remembers the theme
-assets/fig/             the paper's three figures, png + pdf
+index.html                the page
+assets/css/style.css      palette matches the paper figures exactly
+assets/js/data.js         the paper's numbers, with each source named
+assets/js/examples.js     generated — the three worked dialogues
+assets/js/app.js          renders the tables and the examples
+assets/fig/               the paper's figures, png + pdf
+assets/audio/             generated — one mp3 per example turn
+tools/build_examples.py   the only thing that writes examples.js and audio/
 ```
