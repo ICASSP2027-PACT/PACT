@@ -26,15 +26,6 @@
   }
   function tbody(id) { return document.querySelector("#" + id + " tbody"); }
 
-  /* ------------------------------------------------------------- dataset */
-  var sw = document.getElementById("stats");
-  D.dataset.headline.forEach(function (s) {
-    var d = el("div", "stat");
-    d.appendChild(el("b", null, s[0]));
-    d.appendChild(el("span", null, s[1]));
-    sw.appendChild(d);
-  });
-
   /* ---------------------------------------------------------- diagnostic */
   D.diagnostic.macro_f1.forEach(function (m) {
     var d = m[2] - m[1];

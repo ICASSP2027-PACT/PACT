@@ -9,22 +9,9 @@
  * the single source here and every block below names the table it came from.
  *
  * WHEN THE PAPER CHANGES, change this file and nothing else. Re-check against:
- *   sections/3_dataset.tex          tab:data, fig:wer-sim-utmos, validation
  *   sections/4_preliminary.tex      tab:toolcall_invocation_diagnostic
  */
 window.PACT_DATA = {
-
-  /* ---- sections/3_dataset.tex, tab:data ------------------------------- */
-  /* Only the four headline figures are shown; the rest of tab:data, the
-     speech-quality measures and the LLM-judge table are in the paper. */
-  dataset: {
-    headline: [
-      ["3,007", "spoken dialogues"],
-      ["15.65", "turns / dialogue"],
-      ["134", "unique domains"],
-      ["23", "speaker voices"]
-    ],
-  },
 
   /* ---- sections/4_preliminary.tex, tab:toolcall_invocation_diagnostic -- */
   diagnostic: {

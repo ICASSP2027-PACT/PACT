@@ -68,14 +68,12 @@ it was transcribed from:
 
 | Block | Source in `PACT_paper/` |
 |---|---|
-| `dataset.headline` | `sections/3_dataset.tex` — `tab:data` |
 | `diagnostic` | `sections/4_preliminary.tex` — `tab:toolcall_invocation_diagnostic` + prose |
 
-The page shows four headline figures from `tab:data` and nothing else from
-the dataset section: the rest of that table, the speech-quality measures
-(UTMOS / WER / speaker similarity) and the LLM-as-a-judge table are in the
-paper, and the worked examples carry the corpus far better than a count of
-relationship types does.
+Nothing from `sections/3_dataset.tex` is on the page — no corpus table, no
+speech-quality measures, no LLM-as-a-judge table. The thirty demo examples
+carry the corpus far better than a count of relationship types does, and the
+numbers are all in the paper.
 
 The page deliberately stops at the diagnosis. The method
 (`sec:experiments`), the main results table (`tab:all_audio_results`), the

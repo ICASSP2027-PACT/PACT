@@ -134,15 +134,6 @@ h3 { font-size: 1rem; margin: 2rem 0 .5rem; }
 .card h3 { margin: 0 0 .4rem; font-size: .95rem; }
 .card p { margin: 0; font-size: .89rem; color: var(--soft); }
 
-/* -------------------------------------------------------------- stats */
-.stats { display: grid; gap: .75rem; grid-template-columns: repeat(4, 1fr); }
-.stat {
-  border: 1px solid var(--grid); border-radius: var(--radius);
-  padding: .9rem 1rem; text-align: left;
-}
-.stat b { display: block; font-size: 1.5rem; letter-spacing: -.02em; }
-.stat span { font-size: .78rem; color: var(--soft); }
-
 /* -------------------------------------------------------------- table */
 .tablewrap { overflow-x: auto; border: 1px solid var(--grid);
              border-radius: var(--radius); }
@@ -193,7 +184,6 @@ footer p { margin: 0; }
 
 @media (max-width: 760px) {
   .cards { grid-template-columns: 1fr; }
-  .stats { grid-template-columns: repeat(2, 1fr); }
   nav .links a:nth-child(n+5) { display: none; }
 }
 
